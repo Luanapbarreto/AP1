@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AP1 — Estruturas de Repetição</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{--paper:#ECE7DA;--card:#FBF9F3;--ink:#22303F;--soft:#55606B;--line:#C9C0AC;--field:#fff;--plan:#3E7CA6;--do:#4C8C6B;--check:#D98E3C;--act:#B23A26;--ok:#3F7457;--warn:#92600E;--flag:#B23A26;--idle:#EFEAD9;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#1B2430;--card:#243141;--ink:#E7E2D4;--soft:#A5AFBA;--line:#3B4A5D;--field:#1B2430;--idle:#2C3A4C;--ok:#7CC49C;--warn:#E0B25A;--flag:#F08A76}}
+:root[data-theme="dark"]{--paper:#1B2430;--card:#243141;--ink:#E7E2D4;--soft:#A5AFBA;--line:#3B4A5D;--field:#1B2430;--idle:#2C3A4C;--ok:#7CC49C;--warn:#E0B25A;--flag:#F08A76}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;padding:28px 16px 60px}
+.wrap{max-width:1180px;margin:0 auto}
+header{text-align:center;margin-bottom:22px}
+h1{font-family:'Fraunces',Georgia,serif;font-size:clamp(26px,4vw,42px);margin:0 0 8px}
+header p{color:var(--soft);max-width:700px;margin:0 auto;line-height:1.5;font-size:15px}
+.brief{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:16px 20px;margin:0 auto 22px;max-width:860px;font-size:14px;line-height:1.55}
+.brief b{font-family:'Fraunces',Georgia,serif;font-size:17px}
+.brief ol{margin:8px 0 0;padding-left:20px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:22px;font:11px 'JetBrains Mono',monospace}
+.legend span{padding:4px 9px;border-radius:3px;color:#fff}
+.id-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:22px}
+.id-field{display:flex;flex-direction:column;gap:4px}
+.id-field label{font:11px 'JetBrains Mono',monospace;color:var(--soft)}
+input{font:14px inherit;padding:9px 12px;border:1px solid var(--line);border-radius:3px;background:var(--field);color:var(--ink);width:250px;max-width:100%}
+.board{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+@media(max-width:760px){.board{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-top:6px solid var(--a);border-radius:4px;padding:16px}
+.card[data-g=plan]{--a:var(--plan)}.card[data-g=do]{--a:var(--do)}.card[data-g=check]{--a:var(--check)}.card[data-g=act]{--a:var(--act)}
+.head{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.head h2{font-family:'Fraunces',Georgia,serif;font-size:18px;margin:0}
+.num{font:600 11px 'JetBrains Mono',monospace;color:var(--a)}
+.task pre{white-space:pre;overflow-x:auto;background:var(--idle);border:1px solid var(--line);border-radius:3px;padding:8px 10px;margin:8px 0;font:12px/1.5 'JetBrains Mono',ui-monospace,monospace;color:var(--ink)}
+textarea.code{font:13px/1.55 'JetBrains Mono',ui-monospace,monospace;tab-size:2}
+.task{font-size:13px;color:var(--soft);line-height:1.5;margin:8px 0 10px;white-space:pre-line}
+.badge{font:10.5px 'JetBrains Mono',monospace;padding:4px 8px;border-radius:3px;white-space:nowrap;border:1px solid var(--line);background:var(--idle);color:var(--soft)}
+.badge.ok{color:var(--ok)}.badge.warn{color:var(--warn)}.badge.flag{color:var(--flag)}
+textarea{width:100%;min-height:240px;resize:vertical;border:1px solid var(--line);border-radius:3px;padding:10px;font:14px/1.55 inherit;color:var(--ink);background:var(--field)}
+textarea:focus,input:focus{outline:2px solid var(--a,var(--plan));outline-offset:1px}
+.meter{height:5px;background:var(--idle);border-radius:3px;overflow:hidden;margin-top:6px}
+.fill{height:100%;width:0;background:var(--ok);transition:width .25s}
+.stats{display:flex;justify-content:space-between;margin-top:6px;font:10.5px 'JetBrains Mono',monospace;color:var(--soft)}
+.actions{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap;align-items:center}
+button{font:13px 'JetBrains Mono',monospace;padding:12px 22px;border-radius:4px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer}
+button.sec{background:transparent;color:var(--ink);border-color:var(--line)}
+#prog{font:12px 'JetBrains Mono',monospace;color:var(--soft)}
+.report,.panel{display:none;margin-top:28px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:20px}
+.show{display:block}
+h3{font-family:'Fraunces',Georgia,serif;margin:0 0 12px}
+.row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 0;border-top:1px dashed var(--line);font-size:13px}
+.row:first-of-type{border-top:0}
+.det{font:11px 'JetBrains Mono',monospace;color:var(--soft)}
+.note{margin-top:14px;font-size:12.5px;color:var(--soft);line-height:1.5;border-top:1px solid var(--line);padding-top:12px}
+.flags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>AP1 — Estruturas de Repetição</h1>
+  <p>Disciplina de Algoritmos e Programação. Resolva as 6 questões sobre as estruturas enquanto, faça...enquanto e para, usando o Portugol Studio. Ao enviar, o sistema gera um PDF protegido com código de verificação.</p>
+</header>
+
+<div class="brief">
+  <b>Instruções</b>
+  <ol>
+    <li>Nas questões de algoritmo, escreva e teste o programa no <b>Portugol Studio</b> antes de responder. Coloque aqui o código completo (programa { funcao inicio() { ... } }) e responda as perguntas conceituais abaixo dele.</li>
+    <li>Nas questões de teste de mesa e conceituais, escreva com suas próprias palavras.</li>
+    <li>Colar código copiado do Portugol Studio é esperado; o indicador de colagem vale principalmente para as explicações.</li>
+    <li>Cores dos quadros: azul = para, verde = enquanto, laranja = faça...enquanto, vermelho = conceitos, teste de mesa e depuração.</li>
+  </ol>
+</div>
+
+<div class="legend"><span style="background:var(--plan)">para</span><span style="background:var(--do)">enquanto</span><span style="background:var(--check)">faça...enquanto</span><span style="background:var(--act)">Conceitos e análise</span></div>
+
+<div class="id-row">
+  <div class="id-field"><label for="nome">NOME DO ALUNO</label><input id="nome" placeholder="Seu nome completo"></div>
+  <div class="id-field"><label for="turma">TURMA</label><input id="turma" placeholder="Ex.: BSI/LCI"></div>
+</div>
+
+<div class="board" id="board"></div>
+
+<div class="actions">
+  <span id="prog">0/6 questões respondidas</span>
+  <button id="submitBtn">Enviar respostas</button>
+  <button class="sec" id="clearBtn">Limpar</button>
+</div>
+
+<div class="report" id="report"><h3>Relatório de envio</h3><div id="reportBody"></div>
+  <div class="note">O relatório mede a proporção de caracteres inseridos por colagem (Ctrl+V) em relação ao total de cada campo. Percentual alto não prova cópia, mas é um indício para o professor conversar com o aluno e comparar com a fonte.</div></div>
+
+<div style="text-align:center;margin-top:36px"><button class="sec" id="togglePanel" style="display:none">Painel do professor</button></div>
+<div class="panel" id="panel">
+  <h3>Respostas enviadas por todos os alunos</h3>
+  <p class="note" style="margin-top:0;border:0;padding:0">Os envios ficam salvos de forma compartilhada; quem abrir este link autenticado pode ver a lista.</p>
+  <div style="margin:16px 0">
+    <label class="det" for="verifyInput">VERIFICAR CÓDIGO DO PDF RECEBIDO</label>
+    <div style="display:flex;gap:8px;margin-top:5px;flex-wrap:wrap"><input id="verifyInput" placeholder="Ex.: A1B2-C3D4-E5F6-0000" style="flex:1;min-width:200px"><button class="sec" id="verifyBtn">Verificar</button></div>
+    <div id="verifyResult" style="margin-top:10px;font-size:13px"></div>
+  </div>
+  <div id="panelBody"><p class="det">Nenhum envio registrado ainda.</p></div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const S=[
+{
+"id": "q1",
+"n": "1",
+"g": "act",
+"sub": "Conceitual",
+"t": "Conceitos de estruturas de repetição",
+"code": false,
+"q": "Responda com suas próprias palavras:\na) O que são estruturas de repetição e por que elas são necessárias? Dê um exemplo de problema que ficaria inviável de resolver sem elas.\nb) Explique a diferença entre as estruturas enquanto, faca...enquanto e para, indicando em cada uma quando a condição é testada e qual o número mínimo de execuções do bloco.\nc) Quais são os três elementos que todo laço bem formado deve ter (inicialização, condição e atualização)? Explique a função de cada um.\nd) O que é um laço infinito? Cite uma causa comum e como evitá-lo."
+},
+{
+"id": "q2",
+"n": "2",
+"g": "act",
+"sub": "Teste de mesa",
+"t": "Rastreando o código",
+"code": false,
+"q": "Analise os trechos em Portugol Studio abaixo.\n\nTrecho 1:\n```\nprograma {\n  funcao inicio() {\n    inteiro i = 1, soma = 0\n    enquanto (i <= 5) {\n      soma = soma + i\n      escreva(\"i=\", i, \" soma=\", soma, \"\\n\")\n      i = i + 1\n    }\n    escreva(\"Final: \", soma)\n  }\n}\n```\n\nTrecho 2 (dentro de funcao inicio):\n```\ninteiro x = 10\nfaca {\n  escreva(x, \"\\n\")\n  x = x - 3\n} enquanto (x > 10)\n```\n\na) Monte o teste de mesa do Trecho 1 (valores de i e soma a cada repetição) e informe tudo o que será exibido.\nb) Informe o que o Trecho 2 exibe e quantas vezes o bloco é executado.\nc) Se o Trecho 2 usasse enquanto (x > 10) em vez de faca...enquanto, o que mudaria? Explique."
+},
+{
+"id": "q3",
+"n": "3",
+"g": "plan",
+"sub": "Algoritmo — para",
+"t": "Tabuada com para",
+"code": true,
+"q": "Escreva, no Portugol Studio, um programa que leia um número inteiro e exiba a tabuada dele de 1 a 10 (exemplo: 5 x 3 = 15), usando a estrutura para. Ao final, exiba também a soma de todos os resultados da tabuada.\n\nColoque o código completo no quadro e responda: quantas vezes o laço executa e por que a estrutura para é adequada para este problema?"
+},
+{
+"id": "q4",
+"n": "4",
+"g": "do",
+"sub": "Algoritmo — enquanto",
+"t": "Soma e média com sentinela",
+"code": true,
+"q": "Escreva, no Portugol Studio, um programa que leia números inteiros usando a estrutura enquanto, até que o usuário digite 0 (valor sentinela, que não entra na conta). Ao final, exiba a quantidade de números lidos, a soma e a média (use o tipo real). Se nenhum número for informado, exiba \"Nenhum número informado\".\n\Coloque o código completo no quadro e explique: o que é um valor sentinela e por que a leitura aparece antes do laço e também dentro dele?"
+},
+{
+"id": "q5",
+"n": "5",
+"g": "check",
+"sub": "Algoritmo — faça...enquanto",
+"t": "Validação de nota",
+"code": true,
+"q": "Escreva, no Portugol Studio, um programa que peça uma nota entre 0 e 10 e repita a leitura enquanto o valor digitado for inválido, usando faca...enquanto. Ao final, exiba a nota aceita e quantas tentativas foram necessárias.\n\nCole o código completo no quadro e explique por que faca...enquanto é mais natural do que enquanto neste problema."
+},
+{
+"id": "q6",
+"n": "6",
+"g": "act",
+"sub": "Depuração e comparação",
+"t": "Corrigindo e reescrevendo",
+"code": true,
+"q": "O programa abaixo deveria exibir os números de 1 a 5, mas tem um defeito:\n```\nprograma {\n  funcao inicio() {\n    inteiro n = 1\n    enquanto (n <= 5) {\n      escreva(n, \"\\n\")\n    }\n  }\n}\n```\n\na) O que acontece quando ele é executado e por que?\nb) Escreva a versão corrigida com enquanto.\nc) Reescreva o mesmo programa usando para.\nd) Reescreva o mesmo programa usando faca...enquanto.\ne) Para este problema, qual das três versões você considera mais adequada? Justifique."
+}
+];
+const st={};
+const board=document.getElementById("board");
+S.forEach(s=>{
+  st[s.id]={typed:0,pasted:0};
+  board.insertAdjacentHTML("beforeend",`<div class="card" data-g="${s.g}"><div class="head"><div><span class="num">QUESTÃO ${s.n}</span><h2>${s.t}</h2></div><span class="badge" data-b="${s.id}">aguardando</span></div><div class="task"><b>${s.sub}</b>
+${fmt(s.q)}</div><textarea class="${s.code?'code':''}" data-f="${s.id}" placeholder="Escreva sua resposta (código e/ou explicação)..."></textarea><div class="meter"><div class="fill" data-m="${s.id}"></div></div><div class="stats"><span data-c="${s.id}">0 caracteres</span><span data-p="${s.id}">0% colado</span></div></div>`);
+});
+const ids=S.map(s=>s.id);
+function fmt(q){
+  const e=q.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  return e.replace(/\n?```\n?([\s\S]*?)\n?```\n?/g,(m,c)=>"<pre>"+c+"</pre>");
+}
+function classify(p,total){if(!total)return{c:"",l:"vazio"};if(p<20)return{c:"ok",l:"digitado"};if(p<60)return{c:"warn",l:"parcialmente colado"};return{c:"flag",l:"colado (Ctrl+V)"}}
+const pctOf=f=>{const s=st[f],t=s.typed+s.pasted;return t?Math.round(s.pasted/t*100):0};
+function ui(f){
+  const s=st[f],t=s.typed+s.pasted,p=pctOf(f),i=classify(p,t);
+  const b=document.querySelector(`[data-b="${f}"]`);b.className="badge "+i.c;b.textContent=i.l;
+  document.querySelector(`[data-c="${f}"]`).textContent=t+" caracteres";
+  document.querySelector(`[data-p="${f}"]`).textContent=p+"% colado";
+  const m=document.querySelector(`[data-m="${f}"]`);m.style.width=p+"%";m.style.background=p<20?"var(--ok)":p<60?"var(--warn)":"var(--flag)";
+  const n=ids.filter(x=>document.querySelector(`[data-f="${x}"]`).value.trim().length>0).length;
+  document.getElementById("prog").textContent=n+"/"+ids.length+" questões respondidas";
+}
+ids.forEach(f=>{
+  const ta=document.querySelector(`[data-f="${f}"]`);let last="";
+  ta.addEventListener("paste",e=>{st[f].pasted+=((e.clipboardData||window.clipboardData).getData("text")||"").length;ui(f)});
+  ta.addEventListener("input",e=>{
+    if(!ta.value.length){st[f]={typed:0,pasted:0};last="";ui(f);return}
+    if(e.inputType==="insertText"){st[f].typed+=e.data?e.data.length:Math.max(0,ta.value.length-last.length)}
+    else if(e.inputType==="insertLineBreak"){st[f].typed+=1}
+    last=ta.value;ui(f);
+  });
+});
+document.querySelectorAll("textarea.code").forEach(ta=>ta.addEventListener("keydown",e=>{
+  if(e.key==="Tab"){e.preventDefault();document.execCommand("insertText",false,"  ")}
+}));
+document.getElementById("clearBtn").onclick=()=>{
+  ids.forEach(f=>{document.querySelector(`[data-f="${f}"]`).value="";st[f]={typed:0,pasted:0};ui(f)});
+  ["nome","turma"].forEach(i=>document.getElementById(i).value="");
+  document.getElementById("report").classList.remove("show");
+};
+const esc=s=>{const d=document.createElement("div");d.textContent=s;return d.innerHTML};
+const title=f=>S.find(s=>s.id===f);
+async function getDb(){try{return window.claude?await claude.use("db"):null}catch(e){return null}}
+async function genCode(str){
+  const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,"0")).join("").toUpperCase().slice(0,16).match(/.{1,4}/g).join("-");
+}
+const OWNER_PWD="951753";
+async function buildPdf(r){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:"pt",format:"a4",encryption:{userPassword:"",ownerPassword:OWNER_PWD,userPermissions:["print"]}});
+  const mx=50,W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight(),mw=W-mx*2;let y=60;
+  const need=n=>{if(y+n>H-50){doc.addPage();y=60}};
+  doc.setFont("times","bold");doc.setFontSize(19);doc.text("AP1 — Estruturas de Repetição",mx,y);y+=26;
+  doc.setFont("helvetica","normal");doc.setFontSize(11);doc.setTextColor(30);
+  doc.text(`Aluno: ${r.nome}    Turma: ${r.turma||"—"}`,mx,y);y+=16;
+  doc.text(`Enviado em: ${new Date(r.when).toLocaleString("pt-BR")}`,mx,y);y+=14;
+  doc.setDrawColor(180);doc.line(mx,y,W-mx,y);y+=20;
+  ids.forEach(f=>{
+    const s=title(f);need(44);
+    doc.setFont("times","bold");doc.setFontSize(13);doc.setTextColor(30);doc.text(`Questão ${s.n} — ${s.t}`,mx,y);y+=15;
+    const t=(r.answers[f]||"").trim(),i=classify(r.pct[f],t.length);
+    doc.setFont("courier","normal");doc.setFontSize(9);doc.setTextColor(120);doc.text(`Indicador de digitação: ${i.l} — ${r.pct[f]}% colado`,mx,y);y+=15;
+    doc.setFont(s.code?"courier":"helvetica","normal");doc.setFontSize(s.code?9.5:11);doc.setTextColor(30);
+    doc.splitTextToSize(t||"(Não respondido.)",mw).forEach(l=>{need(15);doc.text(l,mx,y);y+=15});
+    y+=12;
+  });
+  need(70);doc.setDrawColor(180);doc.line(mx,y,W-mx,y);y+=18;
+  doc.setFont("courier","normal");doc.setFontSize(8.5);doc.setTextColor(130);
+  ["Documento gerado automaticamente pela atividade AP1 — Estruturas de Repetição.",`Código de verificação: ${r.code}`,"Este PDF é protegido: copiar ou editar sem a senha do professor não é permitido pelos leitores compatíveis.","Para conferir se o conteúdo foi alterado após o envio, use \"Verificar código\" no painel do professor e compare com o texto salvo."].forEach(p=>{
+    doc.splitTextToSize(p,mw).forEach(l=>{need(11);doc.text(l,mx,y);y+=11});y+=4;
+  });
+  const fname=`ap1_repeticao_${(r.nome||"aluno").trim().replace(/\s+/g,"_")}.pdf`;
+  let saved=false;
+  try{const dl=window.claude?await claude.use("downloads"):null;
+    if(dl){await dl.save({filename:fname,data:doc.output("arraybuffer")});saved=true}}catch(e){}
+  if(!saved)doc.save(fname);
+}
+document.getElementById("submitBtn").onclick=async()=>{
+  const nome=nome_.value.trim(),turma=turma_.value.trim();
+  const pct={},rows=[],answers={};let empty=true;
+  ids.forEach(f=>{
+    answers[f]=document.querySelector(`[data-f="${f}"]`).value;
+    const t=st[f].typed+st[f].pasted,p=pctOf(f);pct[f]=p;if(t)empty=false;
+    const i=classify(p,t);
+    rows.push(`<div class="row"><b>Q${title(f).n} — ${title(f).t}</b><span class="det">${t} caracteres · ${p}% colado</span><span class="badge ${i.c}">${i.l}</span></div>`);
+  });
+  if(!nome){alert("Preencha o nome do aluno antes de enviar.");return}
+  if(empty){alert("Preencha ao menos um dos quadros antes de enviar.");return}
+  const when=new Date().toISOString();
+  const code=await genCode([nome,turma,when,...ids.map(f=>answers[f])].join("|"));
+  const rec={nome,turma,pct,when,answers,code};
+  rows.push(`<div class="row"><b>Código de verificação</b><span class="det" style="font-size:13px">${code}</span></div>`);
+  reportBody.innerHTML=rows.join("");report.classList.add("show");
+  const db=await getDb();
+  if(db){try{await db.collection("envios").doc(code).set(rec)}catch(e){console.error(e)}}
+  await buildPdf(rec);
+};
+const nome_=document.getElementById("nome"),turma_=document.getElementById("turma");
+const reportBody=document.getElementById("reportBody"),report=document.getElementById("report");
+
+// painel do professor: abra o link com #professor no final
+if(location.hash==="#professor")document.getElementById("togglePanel").style.display="inline-block";
+document.getElementById("togglePanel").onclick=async()=>{
+  const p=document.getElementById("panel");p.classList.toggle("show");
+  if(!p.classList.contains("show"))return;
+  const body=document.getElementById("panelBody"),db=await getDb();
+  if(!db){body.innerHTML='<p class="det">Faça login no claude.ai para ver os envios.</p>';return}
+  try{
+    const snap=await db.collection("envios").get();
+    const list=snap.docs.map(d=>d.data()).filter(Boolean).sort((a,b)=>new Date(b.when)-new Date(a.when));
+    if(!list.length){body.innerHTML='<p class="det">Nenhum envio registrado ainda.</p>';return}
+    body.innerHTML=list.map(e=>`<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px"><b>${esc(e.nome||"Sem nome")} — ${esc(e.turma||"sem turma")}</b><span class="det">${new Date(e.when).toLocaleString("pt-BR")}</span></div><div class="flags">${ids.map(f=>{const p=(e.pct||{})[f]||0;return `<span class="badge ${classify(p,1).c}">Q${title(f).n}: ${p}%</span>`}).join("")}<span class="badge">código: ${esc(e.code||"—")}</span></div></div>`).join("");
+  }catch(e){body.innerHTML='<p class="det">Não foi possível carregar os envios agora.</p>'}
+};
+document.getElementById("verifyBtn").onclick=async()=>{
+  const out=document.getElementById("verifyResult"),code=verifyInput.value.trim().toUpperCase();
+  if(!code){out.innerHTML="";return}
+  out.textContent="Verificando...";
+  const db=await getDb(),bad='<span class="badge flag">código não encontrado</span> — nenhum envio com esse código foi registrado.';
+  try{
+    const d=db&&await db.collection("envios").doc(code).get();
+    if(d&&d.exists){
+      const e=d.data();
+      out.innerHTML=`<span class="badge ok">código autêntico</span> — envio de <b>${esc(e.nome)}</b> (${esc(e.turma||"sem turma")}), em ${new Date(e.when).toLocaleString("pt-BR")}.<div class="note">Compare o texto abaixo com o PDF entregue. Qualquer diferença indica alteração após o envio.</div>`+ids.map(f=>`<div style="margin-top:10px;border-top:1px dashed var(--line);padding-top:8px"><div class="det">Q${title(f).n} — ${title(f).t}</div><div style="white-space:pre-wrap;font-size:13px">${esc((e.answers||{})[f]||"(em branco)")}</div></div>`).join("");
+    }else out.innerHTML=bad;
+  }catch(e){out.innerHTML=bad}
+};
+const verifyInput=document.getElementById("verifyInput");
+</script>
+</body>
+</html>
